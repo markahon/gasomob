@@ -1,12 +1,21 @@
 # Gaso
 
-Gaso was an web application exercise to practice and experiment with things like
+Gaso can be used to search for nearby gas stations using OpenStreetMaps and Google Maps data and helps user to find the nearest or cheapest station.
 
+Gaso is an HTML5 web application exercise to practice and experiment with things like:
+
+#### client-side
 * HTML5 Geolocation API
-* HTML5 WebSockets
+* HTML5 WebSockets / Socket.io
 * CoffeeScript
 * CoffeeKup templating
+* jQuery Mobile
 * Backbone.js
+
+#### server-side
+* Node.js
+* MongoDB
+* Mongoose
 
 ## Demo
 * Running demo not currently available
