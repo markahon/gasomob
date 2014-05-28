@@ -2,7 +2,7 @@
 
 Gaso can be used to search for nearby gas stations using OpenStreetMaps and Google Maps data and helps user to find the nearest or cheapest station.
 
-Gaso is an HTML5 web application exercise to practice and experiment with things like:
+Gaso is an HTML5 mobile web application exercise to practice and experiment with things like:
 
 #### client-side
 * HTML5 Geolocation API
