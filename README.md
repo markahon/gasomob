@@ -1,11 +1,15 @@
-# Labs
-* Note: lab-exercises are in [labs-branch](gasomob/tree/labs)
-
-
 # Gaso
 
+Gaso was an web application exercise to practice and experiment with things like
+
+* HTML5 Geolocation API
+* HTML5 WebSockets
+* CoffeeScript
+* CoffeeKup templating
+* Backbone.js
+
 ## Demo
-* Demo app running at: [http://gaso.kilke.net][demo]. If it doesn't work, try [alternative link](http://50.16.203.50:3000).
+* Running demo not currently available
 
 
 ## Installation to local machine
