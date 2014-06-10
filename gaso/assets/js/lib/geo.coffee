@@ -2,11 +2,11 @@ class GeoLib
 
   constructor: ->
     @cmGeocoder = new CM.Geocoder Gaso.CM_API_KEY
-    @gooGeocoder = new google.maps.Geocoder();
+    @gooGeocoder = new google.maps.Geocoder()
+    @gooPlaces = new google.maps.places.PlacesService $('<div/>')[0]
 
 
-  findFuelStations: (mapBounds, callback) ->
-
+  findOsmStations: (mapBounds, callback) ->
     options =
       objectType: "fuel"
       return_location: true
@@ -16,6 +16,14 @@ class GeoLib
 
     # Run search
     @cmGeocoder.getLocations "", callback, options
+
+  findGoogleStations: (mapBounds, callback) ->
+    options =
+      types: ["gas_station"]
+      bounds: mapBounds
+
+    # Run search
+    @gooPlaces.search options, callback
 
   findAddress: (address, callback) ->
     @gooGeocoder.geocode address: address, (results, status) ->
@@ -56,7 +64,7 @@ class GeoLib
         else
           Gaso.log "No address found"
 
-      else 
+      else
         Gaso.error "Geocoder failed due to: ", status
 
 
@@ -96,7 +104,7 @@ class GeoLib
     gTo = @latLonTogMapLatLng to
     gFrom = @latLonTogMapLatLng from
     distMeters = google.maps.geometry.spherical.computeDistanceBetween gFrom, gTo
-    
+
 
 # Publish our Geo-lib to application scope.
 Gaso.geo = new GeoLib()

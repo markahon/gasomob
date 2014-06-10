@@ -43,7 +43,7 @@ class Gaso.StationsListPage extends Backbone.View
       text: text
     $text.appendTo $li
     return $li
-    
+
   toggleItems: (event) ->
     $divider = $(event.target).closest('li')
     $items = $divider.nextUntil('.ui-li-divider').toggleClass('ui-custom-hidden')
@@ -58,9 +58,9 @@ class Gaso.StationsListPage extends Backbone.View
     @listItems = []
     if Gaso.loggingEnabled()
       fueltype = @user.get('myFuelType')
-      Gaso.log "DEBUG collection distances during list render(), distances", @collection.models.map (n) -> n.getDistance()
-      Gaso.log "DEBUG collection prices during list render(), prices", @collection.models.map (n) -> n.getPrice(fueltype)?.value
-      Gaso.log "DEBUG collection prices during list render(), rankings", @collection.models.map (n) -> n.ranking
+      Gaso.trace "DEBUG collection distances during list render(), distances", @collection.models.map (n) -> n.getDistance()
+      Gaso.trace "DEBUG collection prices during list render(), prices", @collection.models.map (n) -> n.getPrice(fueltype)?.value
+      Gaso.trace "DEBUG collection prices during list render(), rankings", @collection.models.map (n) -> n.ranking
 
     # Helper variables
     itemsHTML = []
@@ -95,7 +95,7 @@ class Gaso.StationsListPage extends Backbone.View
     else
       @$list.html itemsHTML.join('')
       if @pageInitialized
-        @$list.listview 'refresh' 
+        @$list.listview 'refresh'
         @$list.show()
 
 

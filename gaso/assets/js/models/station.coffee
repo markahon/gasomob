@@ -10,7 +10,7 @@ class Gaso.Station extends Backbone.Model
   defaults:
     brand  : ''
     name   : ''
-    
+
     address:
       country: ''
       city   : ''
@@ -107,9 +107,9 @@ class Gaso.Station extends Backbone.Model
   identifyBrand: (name) =>
     # Gaso.log "Identify brand from", name
     if (/abc/ig).test name
-      @set 'brand', 'abc' 
+      @set 'brand', 'abc'
     else if (/neste/ig).test name
-      @set 'brand', 'nesteoil' 
+      @set 'brand', 'nesteoil'
     else if (/teboil/ig).test name
       @set 'brand', 'teboil'
     else if (/st1|st.*1/ig).test name
@@ -118,6 +118,10 @@ class Gaso.Station extends Backbone.Model
       @set 'brand', 'shell'
     else if (/seo/ig).test name
       @set 'brand', 'seo'
+
+  isValid: ->
+    # Require known gas station brand.
+    Boolean @get('brand')
 
 
   ###

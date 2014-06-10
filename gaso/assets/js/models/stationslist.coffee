@@ -47,12 +47,12 @@ class Gaso.StationsList extends Backbone.Collection
       rank = station.getPrice(fueltype)?.value or Infinity
     else if distanceFactor == 1
       rank = station.getDistance()
-    else 
+    else
       priceIndex = _.indexOf @modelsSortedByPrice, station
       distanceIndex = _.indexOf @modelsSortedByDistance, station
       rank = priceFactor * priceIndex + distanceFactor * distanceIndex
 
-    Gaso.log "Factor: ", @distancePriceFactor, "-> rank for station", station.id, station.get('name'), '=', rank if Gaso.loggingEnabled()
+    Gaso.trace "Factor: ", @distancePriceFactor, "-> rank for station", station.id, station.get('name'), '=', rank if Gaso.loggingEnabled()
     return rank
 
   reCalculateRankings: =>
@@ -72,7 +72,7 @@ class Gaso.StationsList extends Backbone.Collection
     @sort silent: true
     @cleanupList()
     @trigger 'reset'
-    
+
   onUserFuelTypeChanged: =>
     Gaso.log "User fuel type changed. Manually re-sort the collection."
     @sortAndCleanup()
@@ -80,7 +80,7 @@ class Gaso.StationsList extends Backbone.Collection
   onUserDPFactorChanged: =>
     Gaso.log "User changed distance price factor. Manually re-sort the collection."
     @setDistancePriceFactor @user.get('distancePriceFactor')
-    @sortAndCleanup()    
+    @sortAndCleanup()
 
   onDistancesChanged: =>
     Gaso.log "Station distances changed. Manually re-sort the collection."
@@ -88,16 +88,22 @@ class Gaso.StationsList extends Backbone.Collection
 
   # Override add method to add some own logic for syncing/updating the collection.
   # For example we need to calculate/update some properties for the models (that are needed in comparator) prior to
-  # adding the models collection for automatic sorting to work. 
+  # adding the models collection for automatic sorting to work.
   add: (data, options) ->
     needManualSort = false
     # Single ready Stations are added when we query data e.g. from CloudMade
     if data instanceof Gaso.Station
-      Gaso.log "Add single Station model to collection", data
+      Gaso.trace "Add single Station model to collection", data
       # Expect distance to be set for ready Station models, not testing for it
-      unless @duplicateExistsAlready data
+      existingDuplicate = @findDuplicate data
+      unless existingDuplicate
         @setRequiredModelProperties data
         super data, options
+      else
+        if data.osmId != existingDuplicate.id
+          Gaso.trace "TODO update/merge possible new data: Duplicate station for", data.id, ":", data, "exists already with different id:", existingDuplicate.id, existingDuplicate
+        # Cleanup possible already bound events, etc.
+        data.clear()
     # We get raw data arrays (or nulls) from our own DB
     else if data?.length
       Gaso.log "Add #{data.length} stations to collection from raw data"
@@ -109,7 +115,7 @@ class Gaso.StationsList extends Backbone.Collection
         existing = @get station.osmId
         if existing
           # Don't add existing stations, only update data
-          Gaso.log "TODO Update address data for existing station ", existing, " already in collection"
+          Gaso.trace "TODO Update address data from our DB for existing station ", existing, " already in collection"
           if station.prices?
             for p in station.prices
               # Updating of prices will cause sorting order to go stale.
@@ -129,14 +135,15 @@ class Gaso.StationsList extends Backbone.Collection
     Gaso.helper.setDistanceToUser stationModel
     stationModel.ranking = @calculateRanking stationModel
 
-  # Test for duplicates based on distance and brand to all stations in the collection.
-  duplicateExistsAlready: (station) ->
+  # Look for possible duplicates from all stations in the collection based on distance and brand.
+  # Returns the duplicate, if found.
+  findDuplicate: (station) ->
     newStationLoc = station.get 'location'
     newStationBrand = station.get 'brand'
     for existing in @models
       dist = Gaso.geo.calculateDistanceBetween(newStationLoc, existing.get 'location')
-      return true if dist < 50 and newStationBrand == existing.get('brand')
-    return false
+      return existing if dist < 100 and newStationBrand == existing.get('brand')
+    return null
 
   # Prevent performance problems by cleaning up old models
   cleanupList: =>

@@ -38,7 +38,7 @@ flipSwitch = (options, text) ->
   div 'data-role': "fieldcontain", ->
     label for: id, text
     select id: id, name: options.for, 'data-role': "slider", 'data-theme': "a", ->
-      option value: "", 'No'
+      option value: "no", 'No'
       option value: "yes", 'Yes'
 
 ###
@@ -94,6 +94,7 @@ script type: 'text/template', id: 'user-settings-page', ->
     # Note: Use directly to property name in user model for 'for' option.
     flipSwitch for: 'useSpecialTransitions', 'Use special transitions between pages'
     flipSwitch for: 'useSwipeToGoBack', 'Allow swipe for Back-navigation'
+    flipSwitch for: 'allowUncertainSearchResults', 'Include stations with uncertain data in results'
   gasofooter ->
     partial 'navigation'
 

@@ -3,6 +3,7 @@
 ###
 productionEnv = @config.env.production
 templatesversion = "'#{@config.version}'" if productionEnv
+GOOGLE_API_KEY = 'AIzaSyDcg6vsxZ6HaI32Nn24kAzrclo9SL3Rz7M'
 
 # Format Coffeekup's html-output to human-readable form with indents and line breaks.
 @.format = true unless productionEnv
@@ -26,8 +27,8 @@ html ->
     meta(name: 'description', content: @description) if @description?
     meta name: 'viewport', content:'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no'
     meta name: 'apple-mobile-web-app-capable', content: 'yes'
-    meta rel: 'apple-touch-icon', href: '/apple-touch-icon.png' 
-    
+    meta rel: 'apple-touch-icon', href: '/apple-touch-icon.png'
+
     link(rel: 'canonical', href: @canonical) if @canonical?
 
     # Special startup images for iOS
@@ -67,7 +68,7 @@ html ->
           else
             # Manifest hasn't changed.
         return
-        
+
       window.addEventListener 'load', ->
         applicationCache.addEventListener 'updateready', checkApplicationCache, false
         applicationCache.addEventListener 'obsolete', checkApplicationCache, false
@@ -79,7 +80,7 @@ html ->
     # Libs: Google Maps + geometry library
     # Note: v3.6 required to use Retina-optimized icons, see
     # http://stackoverflow.com/questions/9208916/google-map-custom-markers-retina-resolution
-    script src: 'http://maps.googleapis.com/maps/api/js?v=3.6&key=AIzaSyDcg6vsxZ6HaI32Nn24kAzrclo9SL3Rz7M&libraries=geometry&sensor=true'
+    script src: "http://maps.googleapis.com/maps/api/js?v=3.6&key=#{GOOGLE_API_KEY}&libraries=geometry,places&sensor=true"
 
     # Libs: Socket.io for websockets
     script src: '/socket.io/socket.io.js'
@@ -90,7 +91,7 @@ html ->
       script src: 'http://code.jquery.com/jquery-1.7.1.min.js'
       script src: 'http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.1/underscore-min.js'
       script src: 'http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.1/backbone-min.js'
-    else 
+    else
       script src: '/javascripts/lib/json2.js'
       script src: '/javascripts/lib/jquery-1.7.1.js'
       script src: '/javascripts/lib/underscore.js'
@@ -121,17 +122,18 @@ html ->
       script src: '/lib/jquery.mobile-1.1.0.js'
 
     script -> "productionEnv = #{productionEnv}; tmplVer = #{templatesversion};"
-    
+
     # Include rest of own scripts, ie. other but 'mobileinit'
     text assets.js 'application' # See /assets/application.coffee
 
     # Visitor Analytics
+    # NOTE: Initial _tracePageview is disabled intentionally. We use own tracking in router.coffee.
     text '''
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-31694041-1']);
-      _gaq.push(['_trackPageview']);
+      //_gaq.push(['_trackPageview']);
 
       (function() {
         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;

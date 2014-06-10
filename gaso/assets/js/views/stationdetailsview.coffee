@@ -54,7 +54,7 @@ class Gaso.StationDetailsView extends Backbone.View
     @$el.on 'pageshow.stationdetailsview', (event) =>
       google.maps.event.trigger @map, 'resize'
       @map.setCenter new google.maps.LatLng(@station.get('location')[1], @station.get('location')[0])
-    if @user.get 'useSwipeToGoBack'
+    if @user.getToggleSetting 'useSwipeToGoBack'
       @$el.on 'swiperight.stationdetailsview', (event) =>
         window.history.back()
 

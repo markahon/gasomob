@@ -22,7 +22,7 @@ class GasoApp
       $debug.on 'swiperight', ->
         $(@).remove()
         window.noMobileDebug = true
-        
+
     oldContent = $debug.html()
     oldTail = oldContent.substring oldContent.length - 1000
     newContent = oldTail + if error then "<em>#{args.join('')}</em><br>" else "#{args.join('')}<br>"
@@ -37,9 +37,15 @@ class GasoApp
   CM_API_KEY: 'a82f9aaf9fca4a1aa2e81ff9c514f0b2'
 
   # Running app and other data, to be defined/initialized.
-  app: {} 
+  app: {}
 
-  # Logging
+  # Logging helpers
+  trace: (args...) ->
+    # To enable tracing, add ?trace=1 to url (eg. http://localhost:3000/?trace=1#map)
+    @traceEnabled ?= @util.getURLParameter('trace')
+    if @traceEnabled != 'null' and @traceEnabled
+      console.log args... unless productionEnv
+      mobileDebug no, args...
   log: (args...) ->
     console.log args... unless productionEnv
     mobileDebug no, args...
@@ -56,7 +62,11 @@ class GasoApp
       mobileDebug yes, args...
 
   # Utilities: template handling etc.
-  util: 
+  util:
+
+    # Get url parameter value by name.
+    getURLParameter: (name) ->
+      return decodeURI (RegExp("#{name}=(.+?)(&|$)").exec(location.search)||[null,null])[1]
 
     # Recursively pre-load all the templates for the app.
     loadTemplates: (names, callback) ->
@@ -77,7 +87,7 @@ class GasoApp
 
         if (index < names.length)
           _loadTemplate index
-        else 
+        else
           localStorage.setItem 'Templates', JSON.stringify _templates
           Gaso.log 'Templates cached'
           callback()
@@ -89,7 +99,7 @@ class GasoApp
           names = $templates.find('script').map(-> @id).get()
         _loadTemplate 0
         return
-    
+
 
     # Get template by name from hash of preloaded templates
     getTemplate: (name) ->
@@ -135,7 +145,7 @@ class GasoApp
 
     tmplVer = _getAvailableTemplatesVersion()
     ###
-    Used cached templates (only in production), if server templates' version is the same as stored in localStorage. 
+    Used cached templates (only in production), if server templates' version is the same as stored in localStorage.
     @see layout.coffee
     ###
     return tmplVer && _templates.ver == tmplVer
@@ -163,6 +173,7 @@ class GasoApp
       callback err
       return
     , settings
+
 
 # Expose Gaso to window scope.
 window.Gaso = new GasoApp()

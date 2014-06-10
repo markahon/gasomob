@@ -24,8 +24,9 @@ class Gaso.User extends Backbone.Model
     mapTypeId: 'ROADMAP'
 
     # Some UI-related settings
-    useSwipeToGoBack: false
-    useSpecialTransitions: false
+    useSwipeToGoBack            : "no" # yes|no
+    useSpecialTransitions       : "no" # yes|no
+    allowUncertainSearchResults : "yes" # yes|no
 
   initialize: ->
     @set 'refills', []
@@ -75,3 +76,6 @@ class Gaso.User extends Backbone.Model
   isPositionTrackingOK: ->
     # We're lazy, just use the logic from position accuracy testing for now.
     @isPositionAccurate()
+
+  getToggleSetting: (setting) ->
+    @get(setting) == 'yes'

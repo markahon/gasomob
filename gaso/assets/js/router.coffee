@@ -3,6 +3,11 @@
 ###
 class Gaso.AppRouter extends Backbone.Router
 
+  # Custom google analytics tracking.
+  _trackPageview = ->
+    url = Backbone.history.getFragment()
+    _gaq.push(['_trackPageview', "/#{url}"])
+
   routes:
     # Home-page
     ""                      : "home"
@@ -64,6 +69,7 @@ class Gaso.AppRouter extends Backbone.Router
         self.prevPage?.remove()
       self.prevPage = self.currentPage
 
+    @bind 'all', _trackPageview
 
   ###
     ROUTES
@@ -152,12 +158,12 @@ class Gaso.AppRouter extends Backbone.Router
     pageChangeOptions =
       changeHash: false
       transition: transition
-    if @user.get 'useSpecialTransitions'
+    if @user.getToggleSetting 'useSpecialTransitions'
       if page.transition?
         pageChangeOptions.transition = page.transition
       if @currentPage?.outTransition?
         _.extend pageChangeOptions, @currentPage.outTransition
-    
+
     Gaso.log "Page change options", JSON.stringify pageChangeOptions if Gaso.loggingEnabled()
     # Change the JQM page.
     @currentPage = page
@@ -176,4 +182,4 @@ class Gaso.AppRouter extends Backbone.Router
 
     # Fix the navbar in the DOM.
     page.$("#navigation a[href='##{@latestRoute}']").addClass('ui-btn-active') if @latestRoute
-    
+
